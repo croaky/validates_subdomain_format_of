@@ -1,0 +1,1 @@
+require 'validates_subdomain_format_of'
