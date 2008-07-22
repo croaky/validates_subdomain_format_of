@@ -1,14 +1,19 @@
 $:.unshift(File.dirname(__FILE__) + '/../lib')
-RAILS_ROOT = File.dirname(__FILE__)
 
 require 'rubygems'
+require 'active_record'
+
+# Set up database with accounts table, subdomain column
+
+ActiveRecord::Base.establish_connection(
+  :adapter  => 'sqlite3',
+  :database => "#{File.dirname(__FILE__)}/db/subdomain_format_test.sqlite3")
+
+# Set up Feedback testing framework, a la carte
+
 require 'test/unit'
 require 'shoulda'
-require 'active_record'
 require "#{File.dirname(__FILE__)}/../init"
-
-config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
-ActiveRecord::Base.establish_connection(config[ENV['DB'] || 'subdomain_format_test'])
 
 class Test::Unit::TestCase #:nodoc:
   
@@ -32,23 +37,6 @@ class Test::Unit::TestCase #:nodoc:
         assert !account.save, "Saved account with subdomain set to \"#{v}\""
         assert account.errors.on(:subdomain), "There are no errors set on subdomain after being set to \"#{v}\""
       end
-    end
-  end
-  
-  def self.should_pass_validation(account)
-    should 'pass validation' do
-      assert account.valid?
-      assert account.save
-      assert_nil account.errors.on(:subdomain)
-    end
-  end
-  
-  def self.should_fail_validation(account)
-    should 'fail validation' do
-      assert !account.valid?
-      assert !account.save
-      assert account.errors.on(:subdomain)
-      assert_equal 'fails with custom message', account.errors.on(:subdomain)
     end
   end
   

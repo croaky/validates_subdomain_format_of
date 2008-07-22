@@ -1,7 +1,8 @@
 require File.dirname(__FILE__) + '/test_helper'
 
 class Account < ActiveRecord::Base
-  validates_subdomain_format_of :subdomain, 
+  validates_subdomain_format_of :subdomain,
+    :on      => :create, 
     :message => 'fails with custom message'
 end
 
@@ -38,7 +39,11 @@ class ValidatesSubdomainFormatOfTest < Test::Unit::TestCase
       @account.update_attribute :subdomain, 'dan croak'
     end
       
-    should_pass_validation @account
+    should 'pass validation' do
+      assert @account.valid?
+      assert @account.save
+      assert_nil @account.errors.on(:subdomain)
+    end
   end
 
 end
