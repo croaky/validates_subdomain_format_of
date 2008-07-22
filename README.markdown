@@ -8,6 +8,8 @@ Requirements
 
 Addressable.
 
+    sudo gem install addressable
+
 Authors
 -------
 
